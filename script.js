@@ -69,8 +69,10 @@ window.onload = function() {
 
 
 async function getAccessToken() {
-    const clientId = '0ee0e8bdc1154047a87c92eac2d931cc'; 
-    const clientSecret = '49a0d901f2d94edb9e39531a1007e442'; 
+    require('dotenv').config();
+
+    const clientId = process.env.CLIENT_ID; 
+    const clientSecret = process.env.CLIENT_SECRET;
     const token = btoa(`${clientId}:${clientSecret}`);
 
     try {
