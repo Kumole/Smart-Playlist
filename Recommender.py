@@ -1,42 +1,51 @@
+from flask import Flask, request, jsonify
 import pandas as pd
 import numpy as np
+from flask_cors import CORS
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics.pairwise import cosine_similarity
 import warnings
 
+app = Flask(__name__)
+CORS(app)
+
 warnings.filterwarnings('ignore')
 
-df = pd.read_csv("dataset/dataset.csv")
-df.drop(columns='Unnamed: 0', inplace=True)
+def load_and_preprocess_data():
+    df = pd.read_csv("dataset/dataset.csv")
+    df.drop(columns='Unnamed: 0', inplace=True)
 
-dfYear = pd.read_csv("data/data.csv")
-dfYear = dfYear[['id', 'year']]
-dfYear['track_id'] = dfYear['id']
-dfYear.drop(columns='id', inplace=True)
+    dfYear = pd.read_csv("data/data.csv")
+    dfYear = dfYear[['name', 'year']]
+    dfYear['track_name'] = dfYear['name']
+    dfYear.drop(columns='name', inplace=True)
 
-df = pd.merge(df, dfYear, on='track_id')
+    df = pd.merge(df, dfYear, on='track_name')
 
-df[df.duplicated('track_id') == True]
+    xtab_song = pd.crosstab(df['track_id'], df['track_genre'])
+    xtab_song = xtab_song * 2
 
-xtab_song = pd.crosstab(df['track_id'], df['track_genre'])
-xtab_song = xtab_song * 2
+    dfDistinct = df.drop_duplicates('track_id')
+    dfDistinct = dfDistinct.sort_values('track_id')
+    dfDistinct = dfDistinct.reset_index(drop=True)
 
-dfDistinct = df.drop_duplicates('track_id')
-dfDistinct = dfDistinct.sort_values('track_id')
-dfDistinct = dfDistinct.reset_index(drop=True)
+    xtab_song.reset_index(inplace=True)
+    data_encoded = pd.concat([dfDistinct, xtab_song], axis=1)
 
-xtab_song.reset_index(inplace=True)
-data_encoded = pd.concat([dfDistinct, xtab_song], axis=1)
+    data_encoded['track_name_normalized'] = data_encoded['track_name'].str.lower().str.strip()
+    print("Shape of merged DataFrame:", data_encoded.shape) 
 
-data_encoded['track_name_normalized'] = data_encoded['track_name'].str.lower().str.strip()
+    numerical_features = ['explicit', 'danceability', 'energy', 'loudness', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'year']
+    scaler = MinMaxScaler()
+    data_encoded[numerical_features] = scaler.fit_transform(data_encoded[numerical_features])
 
-numerical_features = ['explicit', 'danceability', 'energy', 'loudness', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'year']
-scaler = MinMaxScaler()
-data_encoded[numerical_features] = scaler.fit_transform(data_encoded[numerical_features])
+    calculatied_features = numerical_features + list(xtab_song.drop(columns='track_id').columns)
 
-calculatied_features = numerical_features + list(xtab_song.drop(columns='track_id').columns)
+    cosine_sim = cosine_similarity(data_encoded[calculatied_features], data_encoded[calculatied_features])
 
-cosine_sim = cosine_similarity(data_encoded[calculatied_features], data_encoded[calculatied_features])
+    return data_encoded, cosine_sim
+
+data_encoded, cosine_sim = load_and_preprocess_data()
 
 def get_recommendations(title, N=10):
     indices = pd.Series(data_encoded.index, index=data_encoded['track_name_normalized']).drop_duplicates()
@@ -70,14 +79,17 @@ def get_recommendations(title, N=10):
     
     return recommended_list
 
-recommended_songs = get_recommendations("7 rings", N=10)
-if isinstance(recommended_songs, str):
-    print(recommended_songs)
-else:
-    print("Recommended Songs:")
-    for song in recommended_songs:
-        print(f"Title: {song['track_name']}")
-        print(f"Artist: {song['artists']}")
-        print(f"Album: {song['album_name']}")
-        print(f"Similarity Score: {song['similarity_score']:.2f}")
-        print()
+
+@app.route('/get_recommendations', methods=['POST'])
+def recommend_songs():
+    data = request.json
+    song_title = data['song_title']
+    recommendations = get_recommendations(song_title, N=10)
+    
+    if isinstance(recommendations, str):
+        return jsonify({"error": recommendations})
+    else:
+        return jsonify(recommendations)
+
+if __name__ == "__main__":
+    app.run(debug=True)
