@@ -32,8 +32,7 @@ def load_and_preprocess_data():
     xtab_song.reset_index(inplace=True)
     data_encoded = pd.concat([dfDistinct, xtab_song], axis=1)
 
-    data_encoded['track_name_normalized'] = data_encoded['track_name'].str.lower().str.strip()
-    print("Shape of merged DataFrame:", data_encoded.shape) 
+    data_encoded['track_name_normalized'] = data_encoded['track_name'].str.lower().str.strip() 
 
     numerical_features = ['explicit', 'danceability', 'energy', 'loudness', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'year']
     scaler = MinMaxScaler()
