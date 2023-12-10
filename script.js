@@ -85,8 +85,6 @@ function togglePlayPause() {
     }
 }
 
-
-
 document.getElementById('play').addEventListener('click', togglePlayPause);
 
 document.getElementById('forward').addEventListener('click', function() {
@@ -229,6 +227,11 @@ window.onload = function() {
     var urlToSongKey = {};
     var sortButton = document.getElementById('sortButton');
 
+    function removeSong(songs, songKey) {
+        delete songs[songKey];
+        renderPlaylist(songs);
+    }
+
     function handleSongClick(songPath, song, songKey) {
         if (audioPlayer.src !== songPath) {
             if (audioPlayer.src) {
@@ -248,15 +251,49 @@ window.onload = function() {
         }
     }
 
+function renderPlaylist(songs) {
+    songList.innerHTML = '';
+
+    // Render again after removing a song
     Object.keys(songs).forEach(function(songKey) {
         var song = songs[songKey];
         var songElement = document.createElement('div');
         songElement.className = 'songElement';
         songElement.innerHTML = songKey;
         var songPath = song.src;
-
+        var removeButton = document.createElement('button');
+        removeButton.innerHTML = 'Remove from playlist';
+        removeButton.onclick = function(event) {
+            event.stopPropagation(); 
+            removeSong(songs, songKey);
+        };
+        songElement.appendChild(removeButton);
         urlToSongKey[songPath] = songKey;
+        songElement.onclick = function() {
+            handleSongClick(songPath, song, songKey);
+        };
 
+        songList.appendChild(songElement);
+    });
+}
+
+    Object.keys(songs).forEach(function(songKey) {
+        var song = songs[songKey];
+        var songElement = document.createElement('div');
+        songElement.className = 'songElement';
+        songElement.innerHTML = songKey;
+        var songPath = song.src;
+        //remove button
+        var removeButton = document.createElement('button');
+        removeButton.innerHTML = 'Remove from playlist';
+        removeButton.onclick = (function(key) {
+            return function(event) {
+                event.stopPropagation(); 
+                removeSong(songs, key);
+            };
+        })(songKey);
+        songElement.appendChild(removeButton);
+        urlToSongKey[songPath] = songKey;
         songElement.onclick = function() {
             handleSongClick(songPath, song, songKey);
         };
@@ -384,7 +421,3 @@ function displayPlaylistTracks(items) {
 
 //const playlistId = '5ABHKGoOzxkaa28ttQV9sE';
 //getPlaylistDetails(playlistId);
-
-
-
-
