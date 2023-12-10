@@ -228,6 +228,10 @@ window.onload = function() {
     var sortButton = document.getElementById('sortButton');
 
     function removeSong(songs, songKey) {
+        //To prevent bug when removing while listening
+        if (urlToSongKey[audioPlayer.src] === songKey) {
+            audioPlayer.pause(); // Stop the current song
+        }
         delete songs[songKey];
         renderPlaylist(songs);
     }
@@ -236,7 +240,9 @@ window.onload = function() {
         if (audioPlayer.src !== songPath) {
             if (audioPlayer.src) {
                 var prevSongKey = urlToSongKey[audioPlayer.src];
-                updateSongPlaytime(songs[prevSongKey]);
+                if (songs[prevSongKey]) {
+                    updateSongPlaytime(songs[prevSongKey]);
+                }
             }
             var albumCoverImg = document.querySelector('#wrapper img');
             albumCoverImg.src = 'Covers/' + songKey + '.jfif';
