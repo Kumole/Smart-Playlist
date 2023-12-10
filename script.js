@@ -268,7 +268,8 @@ function renderPlaylist(songs) {
         songElement.innerHTML = songKey;
         var songPath = song.src;
         var removeButton = document.createElement('button');
-        removeButton.innerHTML = 'Remove from playlist';
+        removeButton.innerHTML = 'X';
+        removeButton.className = 'removeButton';
         removeButton.onclick = function(event) {
             event.stopPropagation(); 
             removeSong(songs, songKey);
@@ -291,7 +292,8 @@ function renderPlaylist(songs) {
         var songPath = song.src;
         //remove button
         var removeButton = document.createElement('button');
-        removeButton.innerHTML = 'Remove from playlist';
+        removeButton.innerHTML = 'X';
+        removeButton.className = 'removeButton';
         removeButton.onclick = (function(key) {
             return function(event) {
                 event.stopPropagation(); 
@@ -328,22 +330,33 @@ function renderPlaylist(songs) {
         var sortedSongs = Object.keys(songs).sort(function(a, b) {
             return songs[b].playCount * songs[b].totalTime - songs[a].playCount * songs[a].totalTime;
         });
-
+    
         songList.innerHTML = '';
-
+    
         sortedSongs.forEach(function(songKey) {
             var song = songs[songKey];
             var songElement = document.createElement('div');
             songElement.className = 'songElement';
             songElement.innerHTML = songKey;
-
+    
+            var removeButton = document.createElement('button');
+            removeButton.innerHTML = 'X';
+            removeButton.className = 'removeButton';
+            removeButton.onclick = function(event) {
+                event.stopPropagation(); 
+                removeSong(songs, songKey);
+            };
+            songElement.appendChild(removeButton);
+    
             songElement.onclick = function() {
                 handleSongClick(song.src, song, songKey);
             };
-
+    
             songList.appendChild(songElement);
         });
     });
+    
+
 
     document.getElementById('sendMostPlayedSong').addEventListener('click', function() {
         const mostPlayedSong = getMostPlayedSong(songs);
