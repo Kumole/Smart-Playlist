@@ -7,21 +7,33 @@
 </head>
 <body>
     <div id="outer-wrapper">
+        <div id="leftPanel" class="side-panel"> 
+            <div id="recommendations"></div>
+        </div>
         <div id="wrapper">
             <div id="songList"></div>
-            <audio controls id="audioPlayer"></audio>
+            <img src="" alt="">
+            <audio id="audioPlayer"></audio>
+            <input type="range" value="0" id="progress">
+            <div class="controls">
+                <button id="backward"><i class="fa-solid fa-backward"></i></button>
+                <button id="play"><i class="fa-solid fa-play"></i></button>
+                <button id="forward"><i class="fa-solid fa-forward"></i></button>
+            </div>
+            <div class="functionbuttons">
+                <button id="sendMostPlayedSong">Recommend songs</button>
+                <br>
+                <button id="sortButton">Most Played</button>
+            </div>
+            <!--<button id="pause"><i class="fa-solid fa-pause"></i></button>-->
         </div>
     </div>
-    <div id="recommendations"></div>
-    <button id="sortButton">Most Played Songs</button>
-    <br><br>
-    <button id="sendMostPlayedSong">Recommend songs</button>
-    <br><br>
 
 
     <div id="searchResults"></div>
     
     <script src="script.js"></script>
     <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/201304fec2.js" crossorigin="anonymous"></script>
 </body>
 </html>
