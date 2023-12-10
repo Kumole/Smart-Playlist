@@ -44,6 +44,7 @@ html, body {
 }
 
 .songElement {
+    position: relative;
     background-color: rgba(255, 255, 255, 0.8);
     border: 1px solid #E04DE2;
     padding: 12px 20px;
@@ -235,6 +236,7 @@ audio {
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: all .5s ease-out;
 }
 
 .functionbuttons button:hover {
@@ -259,4 +261,23 @@ audio {
 
 .show-left-panel .side-panel {
     transform: translateX(10px);
+}
+
+
+.removeButton {
+    right: 10px;
+    position: absolute;
+    background: #FF007D;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    padding: 4px 6px;
+    cursor: pointer;
+    font-size: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+}
+
+.removeButton:hover {
+    background-color: #E04DE2;
 }
