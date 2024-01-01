@@ -5,6 +5,7 @@ function updateSongPlaytime(song) {
         var playedTime = (currentTime - song.startTime) / 1000; 
         song.totalTime += playedTime;
         song.startTime = null; 
+        saveSongsToLocalStorage();
     }
 }
 
@@ -26,6 +27,8 @@ async function fetchRecommendations(songTitle) {
 
         if(data.error) {
             console.log(data.error);
+            window.alert(data.error);
+            document.getElementById('outer-wrapper').classList.toggle('show-left-panel');
         } else {
             displayRecommendedSongs(data , songTitle);
         }
@@ -118,11 +121,27 @@ progressBar.addEventListener('input', function() {
 });
 
 
+function saveSongsToLocalStorage() {
+    localStorage.setItem('songs', JSON.stringify(songs));
+}
+
+
+function loadSongsFromLocalStorage() {
+    const storedSongs = localStorage.getItem('songs');
+    if (storedSongs && storedSongs !== "undefined") {
+        return JSON.parse(storedSongs);
+    }
+    return null; 
+}
+
+
+
 
 window.onload = function() {
+
     var baseURL = "https://drive.google.com/uc?export=download&id="
 
-    var songs = {
+    songs = loadSongsFromLocalStorage() || {
         '1000 Footsteps': {'src': baseURL + '1tvcY8LPnR5ubXtFC1Umc65NH6IQcczBB', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'}, 
         '7 rings': {'src': baseURL + '1GHqaQHvjJ2nfnfEnb332Lr0aH4aC1lKr', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'}, 
         'All of Me': {'src': baseURL + '1A5Hgm3APnsGxUt2vtTAygVMUWafdmhQ6', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'}, 
@@ -133,9 +152,9 @@ window.onload = function() {
         'Believer': {'src': baseURL + '12CbGOg5jjrxLq5IzKTFYC8dqDB1qw-jG', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Better Now': {'src': baseURL + '1e6E05uLJCEF9dEhFGm7ihQPsU6jcUTG9', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Blinding Lights': {'src': baseURL + '16mbBoeDah34jVTHzW8I-60wp0gdULWbW', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
-        'Bohemian Rhapsody - Remastered 2011': {'src': baseURL + '1YbbfeFm-bG7W_6M9kA5tLedKovKU_Vlo', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
+        'Bohemian Rhapsody': {'src': baseURL + '1YbbfeFm-bG7W_6M9kA5tLedKovKU_Vlo', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Boomerang': {'src': baseURL + '1f72HyqX0BiNRfj6yPCvIFVwgXXGiYN2l', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
-        "Can't Hold Us (feat. Ray Dalton)": {'src': baseURL + "1_IdVgruclK14Y7jSLqpygfIiRRU-I3Pp", 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
+        "Can't Hold Us": {'src': baseURL + "1_IdVgruclK14Y7jSLqpygfIiRRU-I3Pp", 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         "Can't Save a Fool": {'src': baseURL + "1Egi2yGhV2YBhkEo-idU-3razBaqUSqGr", 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Circles': {'src': baseURL + '1jx2zeJIlX4g-lAJIt5TE4HrscCr06yzq', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Closer': {'src': baseURL + '1ZV93wWahns1gj80JYUb9XPS0ivTQkOKT', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
@@ -145,24 +164,24 @@ window.onload = function() {
         'Dance Monkey': {'src': baseURL + '1AZu8zIaeHTiPlBWiNxUTweAuxsbCaYNa', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Demons': {'src': baseURL + '1pd3uQZA0qhifUwGrvzV72bufMe6GwPsm', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Die For You': {'src': baseURL + '16YaVd7IKLAxpzLOjr-LP98a1a_ReHdHq', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
-        'Do I Wanna Know_': {'src': baseURL + '17Natrhx2S4aTXgEEaRN02ZruH8CzPng5', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
+        'Do I Wanna Know': {'src': baseURL + '17Natrhx2S4aTXgEEaRN02ZruH8CzPng5', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         "Don't Start Now": {'src': baseURL + "1NX9TkAQ1uwxgX4Yz2ewTGFEXliARe-p3", 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'drivers license': {'src': baseURL + '1X6_fEIZjeGkylra6IU6mtGLqApKQuuxz', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Faded': {'src': baseURL + '1ApgxS7EeDgRNqs5w7iIyROhANFZCoN50', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Falling Through': {'src': baseURL + '1yxbJ9YCM1433M9q9E_wnYJAmanj_y_op', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         "God's Plan": {'src': baseURL + "1Aw3lGs6T5Mo8xXmQ8YBJoaRtGP1NFi4v", 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
-        'good 4 u': {'src': baseURL + '10E1mF1i1kFjcTNhLTXd_LUHL4zoSJ0oz', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
+        'good for you': {'src': baseURL + '10E1mF1i1kFjcTNhLTXd_LUHL4zoSJ0oz', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'goosebumps': {'src': baseURL + '1-YKhO_1FMLgxsjbPhquFuBPhWZosANie', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Happier': {'src': baseURL + '1P5G8W-joWlLoRTIUynmWtvREhdNsj7nA', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Havana (feat. Young Thug)': {'src': baseURL + '1Lbl4K06w6YhRDiu3-3FZjUQjDU_WORzb', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Heat Waves': {'src': baseURL + '13bVA-YeeLbwE0IJWxTs_F1gsY9MlSfL_', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'HUMBLE.': {'src': baseURL + '1ev0GeXz9conPpKIpT-lZK8HB0DYF5hcP', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'I Took A Pill In Ibiza - Seeb Remix': {'src': baseURL + '1gdjZl1gVfiJi2jvhZ2lw19ZaSXvpibCn', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
-        "if u think i'm pretty": {'src': baseURL + "1rYMtq7suajLRCHMKZCTRCX-Ey3R8pxIs", 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
+        "if you think i'm pretty": {'src': baseURL + "1rYMtq7suajLRCHMKZCTRCX-Ey3R8pxIs", 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'INDUSTRY BABY (feat. Jack Harlow)': {'src': baseURL + '1rmCtEArZLX74NfvpuHVwbW58CKC5OvTP', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Jocelyn Flores': {'src': baseURL + '1OA8ya5_FhMIAyA-an2oSlu82g1Xoxj-t', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Just Text Me': {'src': baseURL + '1gjateWoEREZWfVZJn8Uf1xtNyp1PHavP', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
-        'Lean On (feat. Mo & DJ Snake)': {'src': baseURL + '1w9FXMl0ownKaw81ps68lJOj0owvwq4kQ', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
+        'Lean On': {'src': baseURL + '1w9FXMl0ownKaw81ps68lJOj0owvwq4kQ', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Leave In The Morning': {'src': baseURL + '1zTpf-LzLdAp_qK4INims66ryI76ZBjFY', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Let Her Go': {'src': baseURL + '1qywCrj6q95FWZwsX5IbGoosGKXbdM9pX', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Let Me Love You': {'src': baseURL + '1cL2uTzUPmSCzPMpsJLwVpfnoPvCJWIc-', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
@@ -183,7 +202,7 @@ window.onload = function() {
         'Perfect': {'src': baseURL + '1UE1or0Z3K_s3g6CMF86ohia1ERkOI5CO', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Photograph': {'src': baseURL + '1v47_Td4f39eAFfc9fU4IbS3iPettOe-Q', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Riptide': {'src': baseURL + '1vj9aXWjKEb8HROLFY_LyoXWkMhb_dsH9', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
-        'rockstar (feat. 21 Savage)': {'src': baseURL + '1HAD4mDvSm-66FjCxH5yLQVVw0FEhx-8S', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
+        'rockstar': {'src': baseURL + '1HAD4mDvSm-66FjCxH5yLQVVw0FEhx-8S', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Roses - Imanbek Remix': {'src': baseURL + '1MzaH0N7yVhUq0UUGpTUND6aIb3v4Lycb', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'SAD!': {'src': baseURL + '1doLNHmQ9DdDgSzVRrtDJIwdXNTf4LBV1', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         "Say You Won't Let Go": {'src': baseURL + "1HjS7RiWwguTs-hB5DH9BTDN03mUkimLh", 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
@@ -196,11 +215,11 @@ window.onload = function() {
         'Something Just Like This': {'src': baseURL + '12PZv2_kqMklQaxpjS7tOo3JRy39UEDU8', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Sorry': {'src': baseURL + '18R6TIdAg7cm7ZAzzA0qgefepNjuklRVI', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Starboy': {'src': baseURL + '18EvbFnxhKQsQAleRbwEnWKo_hayQtAoX', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
-        'STAY (with Justin Bieber)': {'src': baseURL + '1hEM4qWBHa_T7Gi3O2czwSolxf0gtdx8q', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
+        'STAY': {'src': baseURL + '1hEM4qWBHa_T7Gi3O2czwSolxf0gtdx8q', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Stay With Me': {'src': baseURL + '1BpqwXW0x3hWx0xjivorj_KJAQqE5ma4a', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Stressed Out': {'src': baseURL + '1pSFGHOb2CqCNQZ6ihNUQCPSt55SfsWtB', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'sunburn': {'src': baseURL + '1-vM-zBSAS0AuROLFkEmzkPOP4r1Zp2tL', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
-        'Sunflower - Spider-Man_ Into the Spider-Verse': {'src': baseURL + '1gXdpHbchYSsu0ErZ4De5cLvou8aq9FuS', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
+        'Sunflower': {'src': baseURL + '1gXdpHbchYSsu0ErZ4De5cLvou8aq9FuS', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Sweater Weather': {'src': baseURL + '1UETefL104qzPzUaT6EMLqckJZ-z_CXMi', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Take Me To Church': {'src': baseURL + '1-8vLUqSSUs60daJ1t9_mdzd54XzxRCZE', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         "That's What I Like": {'src': baseURL + "1VXGNPKKMn5i0OIIjGbeOx1aAI-AsYNX3", 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
@@ -218,10 +237,11 @@ window.onload = function() {
         'When I Was Your Man': {'src': baseURL + '1tQnPvF5oqU-jwgaNo8MbkXpOw7jz7TrC', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Without Me (with Juice WRLD)': {'src': baseURL + '1tg2c9zqoCfn-BRhg_wiSAS3bL4RQCqSd', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Without Me': {'src': baseURL + '15qUJ2l8b3CNM2Bn-Q0E-w5Y67XdB0PCz', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
-        'Wonderwall - Remastered': {'src': baseURL + '1DWsobfPVgKKJSsj2QuP0jNqI8ihj1CxY', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
+        'Wonderwall': {'src': baseURL + '1DWsobfPVgKKJSsj2QuP0jNqI8ihj1CxY', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'XO Tour Llif3': {'src': baseURL + '1SSi5xE6eGetGuBkfxR7E-CIPc5tEexSa', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'},
         'Yellow': {'src': baseURL + '1dNOq1Zo3RJAbFxka6yOjOWPnsqSRQm4u', 'playCount': 0, 'totalTime': 0, 'startTime': 'null'}
     }
+
     var songList = document.getElementById('songList');
     var audioPlayer = document.getElementById('audioPlayer');
     var urlToSongKey = {};
@@ -234,6 +254,7 @@ window.onload = function() {
         }
         delete songs[songKey];
         renderPlaylist(songs);
+        saveSongsToLocalStorage();
     }
 
     function handleSongClick(songPath, song, songKey) {
@@ -252,6 +273,7 @@ window.onload = function() {
             audioPlayer.src = songPath;
             audioPlayer.play();
             song.playCount += 1;
+            saveSongsToLocalStorage();
 
             document.getElementById('play').innerHTML = '<i class="fa-solid fa-pause"></i>';
         }
