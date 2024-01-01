@@ -6,10 +6,25 @@
 
 html, body {
     height: 100vh;
-    background: linear-gradient(135deg, #FF57A6, #E04DE2, #E17AB8, #E176C1, #CC60A1);
-    background-size: cover; 
+    width: 100vw;
+    background: linear-gradient(334deg, #6b97f7, #8a60e2, #fa3390, #fa3390, #8a60e2, #6b97f7);
+    background-size: 180% 180%;
     background-attachment: fixed;
     font-family: Arial, sans-serif;
+    animation: gradient-animation 7s ease infinite;
+}
+
+@keyframes gradient-animation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+   
 }
 
 #outer-wrapper {
@@ -18,7 +33,7 @@ html, body {
     align-items: center;
     height: 100vh;
     position: relative;
-    overflow: hidden;
+    overflow: auto;
 }
 
 
@@ -27,13 +42,19 @@ html, body {
     width: 800px; 
     height: 600px; 
     background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(5px);
     border: 2px solid rgba(245, 87, 108, 0.3);
     border-radius: 25px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: left;
     padding: 30px 20px;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     z-index: 2;
+}
+
+#wrapper:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 12px 32px rgba(0, 0, 0, 0.05);
 }
 
 #songList {
@@ -251,16 +272,51 @@ audio {
 .side-panel {
     position: absolute;
     top: 0;
-    left: 0; 
+    left: 0;
+    overflow: auto; 
+    background: rgba(255, 255, 255, 0.4);
+    border: 2px solid rgba(245, 87, 108, 0.3);
+    border-radius: 25px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    padding: 20px 20px;
     height: 600px;
     width: 250px; 
-    z-index: 1; 
-    transform: translateX(-100%); 
-    transition: transform 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 0; 
+    /* transform: translateX(-100%);  */
+    transition: all 0.5s ease;
 }
 
 .show-left-panel .side-panel {
-    transform: translateX(10px);
+    /* transform: translateX(10px); */
+    opacity: 1;
+    transform: translateX(-108%);
+    z-index: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+
+.side-panel::-webkit-scrollbar {
+    width: 10px; 
+}
+
+.side-panel::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1); 
+    border-radius: 10px; 
+}
+
+.side-panel::-webkit-scrollbar-thumb {
+    background: #E04DE2; 
+    border-radius: 10px; 
+    border: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+.side-panel::-webkit-scrollbar-thumb:hover {
+    background: #FF57A6; 
 }
 
 
