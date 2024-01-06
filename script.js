@@ -135,33 +135,6 @@ function loadSongsFromLocalStorage() {
 }
 
 
-function initVoiceCommandControl() {
-    window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    const recognition = new window.SpeechRecognition();
-    recognition.interimResults = true;
-    recognition.lang = 'en-US';
-
-    recognition.addEventListener('result', event => {
-        const transcript = Array.from(event.results)
-            .map(result => result[0])
-            .map(result => result.transcript)
-            .join('')
-            .toLowerCase();
-
-        if (event.results[0].isFinal) {
-            if ((transcript.includes('play') && audioPlayer.paused) || 
-                (transcript.includes('pause') && !audioPlayer.paused) || 
-                (transcript.includes('stop') && !audioPlayer.paused)) {
-                togglePlayPause();
-            }
-        }
-    });
-
-    recognition.addEventListener('end', recognition.start);
-    recognition.start();
-}
-
 
 
 
@@ -418,6 +391,49 @@ window.onload = function() {
             console.log("No songs have been played.");
         }
     });
+
+    function playSongByTitle(title) {
+        Object.keys(songs).forEach(songKey => {
+            if (songKey.toLowerCase().includes(title.toLowerCase())) {
+                handleSongClick(songs[songKey].src, songs[songKey], songKey);
+            }
+        });
+    }
+    
+    
+    
+    function initVoiceCommandControl() {
+        window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+        const recognition = new window.SpeechRecognition();
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+    
+        recognition.addEventListener('result', event => {
+            const transcript = Array.from(event.results)
+                .map(result => result[0])
+                .map(result => result.transcript)
+                .join('')
+                .toLowerCase();
+    
+            if (event.results[0].isFinal) {
+                if (transcript.startsWith('play ')) {
+                    const songTitle = transcript.replace('play ', '');
+                    playSongByTitle(songTitle);
+                } else if (transcript.includes('play') && audioPlayer.paused) {
+                    audioPlayer.play();
+                    document.getElementById('play').innerHTML = '<i class="fa-solid fa-pause"></i>';
+                } else if ((transcript.includes('pause') || transcript.includes('stop')) && !audioPlayer.paused) {
+                    audioPlayer.pause();
+                    document.getElementById('play').innerHTML = '<i class="fa-solid fa-play"></i>';
+                }
+            }
+        });
+    
+        recognition.addEventListener('end', recognition.start);
+        recognition.start();
+    }
+    
 
     initVoiceCommandControl();
     
