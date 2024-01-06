@@ -135,6 +135,35 @@ function loadSongsFromLocalStorage() {
 }
 
 
+function initVoiceCommandControl() {
+    window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const recognition = new window.SpeechRecognition();
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    recognition.addEventListener('result', event => {
+        const transcript = Array.from(event.results)
+            .map(result => result[0])
+            .map(result => result.transcript)
+            .join('')
+            .toLowerCase();
+
+        if (event.results[0].isFinal) {
+            if ((transcript.includes('play') && audioPlayer.paused) || 
+                (transcript.includes('pause') && !audioPlayer.paused) || 
+                (transcript.includes('stop') && !audioPlayer.paused)) {
+                togglePlayPause();
+            }
+        }
+    });
+
+    recognition.addEventListener('end', recognition.start);
+    recognition.start();
+}
+
+
+
 
 
 window.onload = function() {
@@ -279,32 +308,32 @@ window.onload = function() {
         }
     }
 
-function renderPlaylist(songs) {
-    songList.innerHTML = '';
+    function renderPlaylist(songs) {
+        songList.innerHTML = '';
 
-    // Render again after removing a song
-    Object.keys(songs).forEach(function(songKey) {
-        var song = songs[songKey];
-        var songElement = document.createElement('div');
-        songElement.className = 'songElement';
-        songElement.innerHTML = songKey;
-        var songPath = song.src;
-        var removeButton = document.createElement('button');
-        removeButton.innerHTML = 'X';
-        removeButton.className = 'removeButton';
-        removeButton.onclick = function(event) {
-            event.stopPropagation(); 
-            removeSong(songs, songKey);
-        };
-        songElement.appendChild(removeButton);
-        urlToSongKey[songPath] = songKey;
-        songElement.onclick = function() {
-            handleSongClick(songPath, song, songKey);
-        };
+        // Render again after removing a song
+        Object.keys(songs).forEach(function(songKey) {
+            var song = songs[songKey];
+            var songElement = document.createElement('div');
+            songElement.className = 'songElement';
+            songElement.innerHTML = songKey;
+            var songPath = song.src;
+            var removeButton = document.createElement('button');
+            removeButton.innerHTML = 'X';
+            removeButton.className = 'removeButton';
+            removeButton.onclick = function(event) {
+                event.stopPropagation(); 
+                removeSong(songs, songKey);
+            };
+            songElement.appendChild(removeButton);
+            urlToSongKey[songPath] = songKey;
+            songElement.onclick = function() {
+                handleSongClick(songPath, song, songKey);
+            };
 
-        songList.appendChild(songElement);
-    });
-}
+            songList.appendChild(songElement);
+        });
+    }
 
     Object.keys(songs).forEach(function(songKey) {
         var song = songs[songKey];
@@ -389,6 +418,8 @@ function renderPlaylist(songs) {
             console.log("No songs have been played.");
         }
     });
+
+    initVoiceCommandControl();
     
 };
 
